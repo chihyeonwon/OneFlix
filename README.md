@@ -41,10 +41,29 @@ Gitlab 인증을 위한 토큰을 생성한다.. 생성한 토큰을 이용하�
 사이즈에 따라 다양한 버전이 제공되는데, 추천 시스템을 구축해보는 것이 목적이기 때문에
 가장 작은 small 버전의 데이터셋을 활용한다.
 ```
+#### 데이터셋 훑어보기
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/f8ac4913-3d21-4090-829b-54ed16d68f9a)
+```
+다운로드한 파일의 압축을 풀어보면 5개의 파일로 이루어진 폴더가 있다.
+```
+- README.txt : 데이터셋에 대한 설명, 저작권 등의 정보가 있는 파일, 분석에는 사용하지 않으나 각 파일의 구성정보 확인 가능
 
+- tags.csv : 각 유저가 영화에 대해 한 단어 혹은 한 문장으로 표현한 태그를 모아놓은 데이터
 
+- ratings.csv : 유저 ID와 영화 ID, 5점 만점의 평점, 그리고 평점을 준 시점(timestamp)로 이루어진 데이터로
+  이 파일을 이용하여 추천 엔진에 학습을 시키고 추천 결과를 도출할 수 있도록 한다.
 
+#### ratings.csv 파일 일부
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/3539ac1d-933b-439e-b353-bf5399713c41)
 
+#### links.csv 파일 일부
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/aedbc508-e9a2-4f01-9fd9-b808be7c9639)
+
+```
+movies.csv 파일과 links.csv 파일을 이용하여 oneflex에 보여줄 영화 정보 데이터프레임을 만든다.
+웹 사이트 형태에서 보여주기 위해서는 영화의 제목, 영화 포스터 등의 정보가 필요하다.
+무비렌즈 데이터셋에서 사용하고 있는 IMDB, TMDB 사이트의 API를 사용해서 이 과정을 자동화한다.
+```
 
 
 
