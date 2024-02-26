@@ -98,4 +98,13 @@ if __name__ == "__main__":
 movies.csv 파일의 모습이 출력되는 것을 알 수 있다.
 movieid, title, genres의 3개의 속성에 9742개의 데이터행이 출력된다.
 ```
+#### movie_preprocessor.py 수정
 
+```
+movies.csv와 links.csv를 결합하는 작업을 수행한다.
+공통된 key인 movieId를 이용해서 서로 다른 두 개의 데이터프레임을 병합하는 함수인 merge를 사용하였다.
+```
+
+```
+기존에 출력된 값에서 imdbId, tmbdId 컬럼이 추가된 것을 확인할 수 있다.
+```
