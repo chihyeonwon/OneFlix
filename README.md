@@ -83,4 +83,19 @@ app 폴더 밑에 data 폴더를 만들고 다운로드한 데이터셋 파일 �
 HTTP 통신을 위한 패키지인 requests 패키지를 다음 명령어로 설치한다.
 ```
 
+#### movie_preprocessor.py 
+```python
+import pandas as pd
+import requests
+
+if __name__ == "__main__":
+    movies_df = pd.read_csv('data/movies.csv')
+    print(movies_df)
+```
+이렇게 코드를 작성한 후에 movie_preprosessor.py 파일이 위치한 곳으로 이동해 작성한 스크립트를 실행한다.
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/b2d497bd-2092-4639-9faa-70a4adad15e8)
+```
+movies.csv 파일의 모습이 출력되는 것을 알 수 있다.
+movieid, title, genres의 3개의 속성에 9742개의 데이터행이 출력된다.
+```
 
