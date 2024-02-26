@@ -32,7 +32,15 @@ gitlab-runner 대신 GitHub Action을 GitHub Pages 대신 Cloudflare Pages를 �
 Gitlab 인증을 위한 토큰을 생성한다.. 생성한 토큰을 이용하여 Gitlab repo를 인증할 수 있다.
 ```
 
+## 데이터 전처리하기
 
+#### 데이터셋 다운로드
+[무비렌즈 데이터셋 다운로드](https://files.grouplens.org/datasets/movielens/ml-latest-small.zip)
+```
+추천 시스템 연습에 많이 활용되는 무비렌즈 데이터셋을 활용한다.
+사이즈에 따라 다양한 버전이 제공되는데, 추천 시스템을 구축해보는 것이 목적이기 때문에
+가장 작은 small 버전의 데이터셋을 활용한다.
+```
 
 
 
