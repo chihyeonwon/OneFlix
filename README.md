@@ -64,7 +64,23 @@ movies.csv 파일과 links.csv 파일을 이용하여 oneflex에 보여줄 영�
 웹 사이트 형태에서 보여주기 위해서는 영화의 제목, 영화 포스터 등의 정보가 필요하다.
 무비렌즈 데이터셋에서 사용하고 있는 IMDB, TMDB 사이트의 API를 사용해서 이 과정을 자동화한다.
 ```
+#### 데이터셋과 전처리 코드
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/77571c0f-aae2-453b-9d12-315aabc41148)
+```
+app 폴더 밑에 data 폴더를 만들고 다운로드한 데이터셋 파일 중 필요한 데이터파일(links.csv, movies.csv, ratings.csv)을
+넣는다.
 
-
+또 전처리 코드인 movie_preprocessor.py 파일을 생성하여 app 폴더의 하단에 추가한다.
+```
+#### pandas 패키지 설치
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/9f6020a6-e82d-498d-aa41-3ab435350276)
+```
+파이썬에서 데이터를 다룰 때 사용하는 padas 패키지를 다음 명령어로 설치한다.
+```
+#### request 패키지 설치
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/137f92d2-15c6-44c7-895c-4e29173106ff)
+```
+HTTP 통신을 위한 패키지인 requests 패키지를 다음 명령어로 설치한다.
+```
 
 
