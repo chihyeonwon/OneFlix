@@ -99,12 +99,34 @@ movies.csv 파일의 모습이 출력되는 것을 알 수 있다.
 movieid, title, genres의 3개의 속성에 9742개의 데이터행이 출력된다.
 ```
 #### movie_preprocessor.py 수정
-
+```python
+if __name__ == "__main__":
+    movies_df = pd.read_csv('data/movies.csv')
+    # id 를 문자로 인식하도록 type을 변경한다.
+    movies_df['movieId'] = movies_df['movieId'].astype(str)
+    links_df = pd.read_csv('data/links.csv', dtype=str)
+    merged_df = movies_df.merge(
+        links_df, on='movieId', how='left')  # movies_df를 기준으로 merge
+    print(merged_df)
+    print(merged_df.columns)
+```
 ```
 movies.csv와 links.csv를 결합하는 작업을 수행한다.
 공통된 key인 movieId를 이용해서 서로 다른 두 개의 데이터프레임을 병합하는 함수인 merge를 사용하였다.
 ```
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/3eae34a9-5e7d-4fb9-aec4-35574f9ae8e8)
 ```
 기존에 출력된 값에서 imdbId, tmbdId 컬럼이 추가된 것을 확인할 수 있다.
 ```
+
+
+
+
+
+
+
+
+
+
+
+
