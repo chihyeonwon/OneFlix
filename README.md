@@ -98,7 +98,7 @@ if __name__ == "__main__":
 movies.csv 파일의 모습이 출력되는 것을 알 수 있다.
 movieid, title, genres의 3개의 속성에 9742개의 데이터행이 출력된다.
 ```
-#### movie_preprocessor.py 수정
+#### movie_preprocessor.py 수정 (파일 merge)
 ```python
 if __name__ == "__main__":
     movies_df = pd.read_csv('data/movies.csv')
@@ -118,8 +118,36 @@ movies.csv와 links.csv를 결합하는 작업을 수행한다.
 ```
 기존에 출력된 값에서 imdbId, tmbdId 컬럼이 추가된 것을 확인할 수 있다.
 ```
+#### movie_preprocessor.py 수정 (add_url)
+```python
+def add_url(row):
+    return f"http://www.imdb.com/title/tt{row}/"
 
 
+if __name__ == "__main__":
+    movies_df = pd.read_csv('data/movies.csv')
+    # id 를 문자로 인식하도록 type을 변경한다.
+    movies_df['movieId'] = movies_df['movieId'].astype(str)
+    links_df = pd.read_csv('data/links.csv', dtype=str)
+    merged_df = movies_df.merge(
+        links_df, on='movieId', how='left')  # movies_df를 기준으로 merge
+    merged_df['url'] = merged_df['imdbId'].apply(lambda x: add_url(x))
+    print(merged_df)
+    print(merged_df.iloc[1, :])
+```
+```
+URL 컬럼을 추가한다. URL은 imdb 웹사이트의 영화 상세 화면으로 이동하도록 한다.
+imdb 영화 상세 화면 url 주소는 다음과 같다. http://www.imdb.com/title/tt0114709/
+tt 뒤의 0114709는 imdbId 컬럼의 값에 해당하는 것으로 보아 http://www.imdb.com/title/tt에 imdbId를
+붙여주면 된다는 것을 알 수 있다. 이를 코드로 표현하여 url이라는 컬럼을 추가했다.
+```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/97f7ef2d-927b-451d-932c-fea0b9d1f58a)
+```
+기존 컬럼의 마지막에 url 컬럼이 추가되는 것을 알 수 있다.
+첫 번째 데이터인 Jumanji 영화의 정보를 출력하도록 하고 url 부분의 url로 이동하면 Jumanji의 영화 상세 화면으로
+이동하는 것을 확인할 수 있다.
+```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/1657c4cc-0c89-4a74-92fc-58843f2de64f)
 
 
 
