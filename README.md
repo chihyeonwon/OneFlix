@@ -98,7 +98,7 @@ if __name__ == "__main__":
 movies.csv 파일의 모습이 출력되는 것을 알 수 있다.
 movieid, title, genres의 3개의 속성에 9742개의 데이터행이 출력된다.
 ```
-#### movie_preprocessor.py 수정 (파일 merge)
+#### movie_preprocessor.py 수정 (파일 merge(), imdbId, tmdbId 컬럼 추가)
 ```python
 if __name__ == "__main__":
     movies_df = pd.read_csv('data/movies.csv')
@@ -118,7 +118,7 @@ movies.csv와 links.csv를 결합하는 작업을 수행한다.
 ```
 기존에 출력된 값에서 imdbId, tmbdId 컬럼이 추가된 것을 확인할 수 있다.
 ```
-#### movie_preprocessor.py 수정 (add_url)
+#### movie_preprocessor.py 수정 (add_url(), apply(), url 컬럼 추가)
 ```python
 def add_url(row):
     return f"http://www.imdb.com/title/tt{row}/"
@@ -149,10 +149,50 @@ tt 뒤의 0114709는 imdbId 컬럼의 값에 해당하는 것으로 보아 http:
 ```
 ![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/1657c4cc-0c89-4a74-92fc-58843f2de64f)
 
+#### movie_preprocessor.py 수정 (add_rating(), agg(), rating_count, rating_avg 칼럼 추가)
+```python
+def add_rating(df):
+    ratings_df = pd.read_csv('data/ratings.csv')
+    ratings_df['movieId'] = ratings_df['movieId'].astype(str)
+    agg_df = ratings_df.groupby('movieId').agg(
+        rating_count=('rating', 'count'),
+        rating_avg=('rating', 'mean')
+    ).reset_index()
 
+    rating_added_df = df.merge(agg_df, on='movieId')
+    return rating_added_df
 
+if __name__ == "__main__":
+    movies_df = pd.read_csv('data/movies.csv')
+    # id 를 문자로 인식하도록 type을 변경한다.
+    movies_df['movieId'] = movies_df['movieId'].astype(str)
+    links_df = pd.read_csv('data/links.csv', dtype=str)
+    merged_df = movies_df.merge(
+        links_df, on='movieId', how='left')  # movies_df를 기준으로 merge
+    merged_df['url'] = merged_df['imdbId'].apply(lambda x: add_url(x))
+    result_df = add_rating(merged_df)
+    print(result_df)
+```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/de274e39-653c-42d2-85e2-663f7ff2e449)
+```
+add_rating 함수는 ratings.csv 파일을 읽고 rating 정보를 count, mean이라는 집계함수를 사용해서 컬럼에 추가해준다.
+rating_count, rating_avg 칼럼이 추가된 것을 확인할 수 있다.
+```
 
+#### themoviedb 사이트에서 API 키 값 받아오기
+[themoviedb 사이트](https://www.themoviedb.org/signup)
+```
+tmdb의 API를 이용해서 영화 포스터 데이터를 받아온다.
+```
 
+```
+회원가입 후 이메일 인증을 한 뒤에 프로필 부분의 설정 메뉴로 들어간다.
+설정에서 API 메뉴를 선택한다.
+```
+
+```
+Developer 키 타입 설정 및 API 사용 동의 후 신청 상세 화면을 작성한다. 바로 API 키가 발급된다.
+```
 
 
 
