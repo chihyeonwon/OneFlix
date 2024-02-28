@@ -250,12 +250,55 @@ imdbId, tmdbId, url, rating_count, rating_avg, poster_path 컬럼이 모두 잘 
 ## 백엔드 목록 조회하기
 
 #### FastAPI 세팅
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/be294c28-14c1-486c-ae32-753f0a1d1a98)
 ```
 FastAPI는 파이썬 기반의 가장 빠른 웹 프레임워크 중 하나이다. FastAPI 패키지를 다음 명령어로 설치한다.
 ```
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/9ececb11-794f-4409-9183-f8214e0b7a86)
 ```
  다음 명령어로  웹 서버 구동을 위한 uvicorn 패키지도 설치한다.
 ```
+#### main.py
+```python
+app = FastAPI()
 
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+@app.get("/all/")
+async def all_movies():
+    return {"message": "All movies"}
+
+
+@app.get("/generes/{genre}")
+async def genre_movies(genre: str):
+    return {"message": f"genre: {genre}"}
+
+
+@app.get("/user-based/")
+async def user_based(params: Optional[List[str]] = Query(None)):
+    return {"message": "user based"}
+
+
+@app.get("/item-based/{item_id}")
+async def item_based(item_id: str):
+    return {"message": f"item ased: {item_id}"}
+```
+```
+실제로 활용할 4개의 엔드포인트를 미리 생성하였다.("/", "/all", "/genres/{genre}", "/user-based/", "/item-based/{item_id}")
+```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/262c6029-c92f-4cfa-9914-18eb9d12d980)
+```
+FastAPI 서버를 다음 명령어로 동작시킨다.
+```
+#### 엔드포인트 작동 테스팅
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/8440dce1-9a7f-467f-868b-3829721eb76f)
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/364b8746-e979-47c8-9d73-3d8a85a46fe8)
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/8639d4e9-9cf0-4c53-82db-1f270c5d4d43)
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/09297fee-2434-4181-af8d-6a34a6d66d62)
+```
+지정한 4개의 엔드포인트가 잘 작동하는지 확인하였다. 4개의 엔드포인트에서 원하는 데이터가 나올 수 있도록 구현한다.
+```
