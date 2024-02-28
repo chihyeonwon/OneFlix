@@ -333,5 +333,6 @@ async def all_movies():
 resolver.py는 pandas에서 제공하는 sample 함수를 이용하여 랜덤하게 10개의 데이터를 반환하도록 한다.
 main.py의 "/all"엔드 포인트의 코드를 result로 random_items()으로 반환되는 10개의 데이터를 출력하도록 수정한다.
 ```
+#### /all 엔드포인트 테스팅 (랜덤한 10개의 데이터 출력)
 ![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/9392545c-42fc-4869-85fd-b6208da7de68)
 
