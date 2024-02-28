@@ -304,17 +304,29 @@ FastAPI 서버를 다음 명령어로 동작시킨다.
 ```
 ## /all 엔드포인트
 ```
-
+/all 엔드포인트에서는 랜덤한 10개의 영화 데이터를 반환하도록 한다.
 ```
 #### resolver.py
-
 ```python
+import pandas as pd
 
+item_fname = 'data/movies_final.csv'
+
+
+def random_items():
+    movies_df = pd.read_csv(item_fname)
+    movies_df = movies_df.fillna('')  # 공백을 채워준다
+    result_items = movies_df.sample(n=10).to_dict("records")
+    return result_items
 ```
 #### main.py
 ```python
-
+@app.get("/all/")
+async def all_movies():
+    result = random_items()
+    return {"result": result}
 ```
 ```
-
+resolver.py는 pandas에서 제공하는 sample 함수를 이용하여 랜덤하게 10개의 데이터를 반환하도록 한다.
+main.py의 "/all"엔드 포인트의 코드를 result로 random_items()으로 반환되는 10개의 데이터를 출력하도록 수정한다.
 ```
