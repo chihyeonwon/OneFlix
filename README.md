@@ -192,8 +192,11 @@ Developer 키 타입 설정 및 API 사용 동의 후 신청 상세 화면을 �
 ```
 #### 진행상황을 알려주는 tqdm 패키지 설치
 ![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/1595a4e7-e631-4d49-b0d2-e91e4ea8f195)
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/23634fe4-b85f-42ab-b3ba-1126e1c7aa68)
 ```
 코드를 실행하려면 시간이 오래 걸리기 때문에 진행 상황을 알려주는 패키지인 tqdm 패키지를 설치한다.
+
+실제로 전처리한 데이 9724개를 csv파일로 만드는 데 50분 이상이 걸렸다.
 ```
 #### movie_preprocessor.py 수정 (add_poster(), to_csv(), poster_path 컬럼 추가)
 ```python
