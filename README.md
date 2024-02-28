@@ -243,7 +243,7 @@ poster_path 값을 받아서 컬럼 값에 저장한다.
 최종적으로 만들어진 테이블을 data밑의 movies_final.csv 이름의 csv 형식의 파일로 저장한다.
 ```
 #### 최종적으로 전처리 된 movies_final csv 데이터의 일부
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/74b649d7-ce9f-48a6-941c-75c5f6017236)
 ```
 기존 movieId, title, genres 컬럼에 데이터 전처리 작업을 통해서 얻은
 imdbId, tmdbId, url, rating_count, rating_avg, poster_path 컬럼이 모두 잘 추가되어 들어가 있는 것을 확인할 수 있다.
@@ -333,3 +333,5 @@ async def all_movies():
 resolver.py는 pandas에서 제공하는 sample 함수를 이용하여 랜덤하게 10개의 데이터를 반환하도록 한다.
 main.py의 "/all"엔드 포인트의 코드를 result로 random_items()으로 반환되는 10개의 데이터를 출력하도록 수정한다.
 ```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/9392545c-42fc-4869-85fd-b6208da7de68)
+
