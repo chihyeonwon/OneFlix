@@ -184,17 +184,78 @@ rating_count, rating_avg 칼럼이 추가된 것을 확인할 수 있다.
 ```
 tmdb의 API를 이용해서 영화 포스터 데이터를 받아온다.
 ```
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/6fc914db-009b-4089-972d-6622d745384e)
 ```
 회원가입 후 이메일 인증을 한 뒤에 프로필 부분의 설정 메뉴로 들어간다.
 설정에서 API 메뉴를 선택한다.
-```
-
-```
 Developer 키 타입 설정 및 API 사용 동의 후 신청 상세 화면을 작성한다. 바로 API 키가 발급된다.
 ```
+#### 진행상황을 알려주는 tqdm 패키지 설치
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/1595a4e7-e631-4d49-b0d2-e91e4ea8f195)
+```
+코드를 실행하려면 시간이 오래 걸리기 때문에 진행 상황을 알려주는 패키지인 tqdm 패키지를 설치한다.
+```
+#### movie_preprocessor.py 수정 (add_poster(), to_csv(), poster_path 컬럼 추가)
+```python
 
+def add_poster(df):
+    for i, row in tqdm(df.iterrows(), total=df.shape[0]):
+        tmdb_id = row["tmdbId"]
+        tmdb_url = f"https://api.themoviedb.org/3/movie/{tmdb_id}?api_key=29ab09fff1761c162de4a759b1248e93&language=en-US"
+        result = requests.get(tmdb_url)
+        # final url : https://image.tmdb.org/t/p/original/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg
+        try:
+            df.at[i, "poster_path"] = "https://image.tmdb.org/t/p/original" + \
+                result.json()['poster_path']
+            time.sleep(0.1)  # 0.1초 시간 간격을 만들어 준다.
+        except (TypeError, KeyError) as e:
+            # toy story poster as default
+            df.at[i, "poster_path"] = "https://image.tmdb.org/t/p/original/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg"
 
+    return df
 
+if __name__ == "__main__":
+    movies_df = pd.read_csv('data/movies.csv')
+    # id 를 문자로 인식하도록 type을 변경한다.
+    movies_df['movieId'] = movies_df['movieId'].astype(str)
+    links_df = pd.read_csv('data/links.csv', dtype=str)
+    merged_df = movies_df.merge(
+        links_df, on='movieId', how='left')  # movies_df를 기준으로 merge
+    merged_df['url'] = merged_df['imdbId'].apply(lambda x: add_url(x))
+    result_df = add_rating(merged_df)
+    result_df['poster_path'] = None
+    reesult_df = add_poster(result_df)
 
+    result_df.to_csv("data/movies_final.csv", index=None)
+```
+```
+발급받은 API 키와 tmdbId를 조합해서 tmdb_url을 생성한다.
+tmdb_url로 HTTP GET Request 요청을 보낸 결과를 result에 저장한다.
+poster 경로는 result.json()을 https://image.tmdb.org/t/p/original 뒤에 붙인 url이 된다.
+이 경로에서 poster_path를 받아온다. 포스터 경로
+
+메인 함수에서 poster_path 컬럼을 None으로 선언한 후 add_poster함수에서 api를 통해서
+poster_path 값을 받아서 컬럼 값에 저장한다.
+
+최종적으로 만들어진 테이블을 data밑의 movies_final.csv 이름의 csv 형식의 파일로 저장한다.
+```
+#### 최종적으로 전처리 된 movies_final csv 데이터의 일부
+
+```
+기존 movieId, title, genres 컬럼에 데이터 전처리 작업을 통해서 얻은
+imdbId, tmdbId, url, rating_count, rating_avg, poster_path 컬럼이 모두 잘 추가되어 들어가 있는 것을 확인할 수 있다.
+
+이제 추천 시스템이 탑재된 백엔드를 구현한다.
+```
+## 백엔드 목록 조회하기
+
+#### FastAPI 세팅
+
+```
+FastAPI는 파이썬 기반의 가장 빠른 웹 프레임워크 중 하나이다. FastAPI 패키지를 다음 명령어로 설치한다.
+```
+
+```
+ 다음 명령어로  웹 서버 구동을 위한 uvicorn 패키지도 설치한다.
+```
 
