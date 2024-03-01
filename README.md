@@ -376,7 +376,7 @@ genres 컬럼을 보면 adventure | animation | children | comedy | fantasty 같
 ## 추천 목록 조회하기
 
 #### implicit 패키지 설치
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/3d0604df-7466-4795-99e6-5e4173f2954b)
 ```
 implicit 패키지는 다양한 머신러닝 기법을 이용해서 추천 엔진을 만들 수 있게 해주는 파이썬 패키지이다.
 딥러닝을 이용하지는 않지만, 추천 시스템의 기본 원리를 이해하고 간단한 수준의 추천 시스템을 만드는 데 충분하다.
@@ -385,13 +385,62 @@ implicit 패키지는 다양한 머신러닝 기법을 이용해서 추천 엔�
 ```
 
 #### 추천 엔진 학습시키기
-
 ```
 추천 엔진을 학습시키고 그 결과를 /item-based(영화별 추천), /user-based(유저별 추천) 엔드포인트로 보내주기 위해서
 recommender.py 파일을 만든다. 또한 model이 저장될 수 있또록 model이라는 폴더도 함께 만든다.
 ```
+#### recommender.py
+```python
+def model_train():
+    ratings_df = pd.read_csv(data_fname)
+    ratings_df["userId"] = ratings_df["userId"].astype("category")
+    ratings_df["movieId"] = ratings_df["movieId"].astype("category")
+
+    # create a sparse matrix of all the users/repos
+    rating_matrix = coo_matrix(
+        (
+            ratings_df["rating"].astype(np.float32),
+            (
+                ratings_df["movieId"].cat.codes.copy(),
+                ratings_df["userId"].cat.codes.copy(),
+            ),
+        )
+    )
+
+    als_model = AlternatingLeastSquares(
+        factors=50, regularization=0.01, dtype=np.float64, iterations=50
+    )
+
+    als_model.fit(weight * rating_matrix)
+
+    pickle.dump(als_model, open(saved_model_fname, "wb"))
+    return als_model
 
 
+if __name__ == "__main__":
+    model = model_train()
+```
+```
+model_train() 함수는 ratings 데이터를 이용해서 추천 엔진(=model)을 학습시키는 함수이다.
+userId와 movieId를 category 데이터 형태로 바꿔준다.
+어떤 유저가 어떤 영화에 얼마의 평점을 주었는 지를 행렬 형태로 표현해주는 함수인 coo_matrix함수를 사용한다.
+als_model을 생성하는 부분을 보면 factors, regularization, dtype, iteration의 변수를 조정할 수 있다.
 
+factors: latent factor의 개수로 숫자가 클수록 기준의 개수가 많아지고 이는 다양한 사람들의 취향을 반영할 수 있다는 뜻이다
+단점으로는 오버피팅이라고하는 과적합이 발생할 가능성이 높아진다. 과적합이 일어날 경우 학습한 데이터에서는 아주 정확한 결과값이
+학습하지 않은 데이터에서는 좋지 않은 결과값이 나온다.
 
+regularization: 이러한 과적합 문제를 방지하기 위한 변수로 숫자가 클수록 과적합을 막을 수 있으나 너무 큰 값을 넣을 경우에는
+추천의 정확도가 떨어질 확률이 높아진다.
 
+dtype : rating의 데이터 형식이 float이기 때문에 np.float64를 사용한다.
+
+iterations : 학습을 통해 parameter의 업데이트를 몇 번 할 것인지를 나타낸다. iteration의 횟수도 많을수록 과적합이 될 가능성이 높다
+
+Collaborative Filtering 기반의 추천 시스템이므로 변수에 여러 값을 넣어서 실험해 볼 수 있다.
+```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/d71188ce-3b50-4f44-912b-36da77a5388a)
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/f5101ba3-027e-4600-b134-5fce5bd010b8)
+```
+recommender.py를 실행하면 model 폴더 밑에 finalized_model.sav라는 모델 파일이 생긴 것을 확인할 수 있다.
+```
