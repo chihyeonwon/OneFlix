@@ -593,8 +593,9 @@ FastAPI에서 params를 ["1:4.5", "2:5"]라는 리스트의 형태를 user_based
 쉽도록 변환한 것이다.
 ```
 #### /user-based 추천 테스팅
-
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/d11e9543-6a78-442d-8c0e-e750265fe959)
 ```
-
+600번과 609번에 대해 평점 5점을 주고 어떤 결과가 나오는 지 확인하였다.
+비슷한 시기에 적당히 흥행했던 작품들이 나온다.
 ```
 
