@@ -480,8 +480,7 @@ def model_train():
 def calculate_item_based(item_id, items):
     loaded_model = pickle.load(open(saved_model_fname, "rb"))
     recs = loaded_model.similar_items(itemid=int(item_id), N=11)
-    return [str(items[r]) for r, s in recs]
-
+    return [str(items[r]) for r in recs[0]]
 
 def item_based_recommendation(item_id):
     ratings_df = pd.read_csv(data_fname)
@@ -538,7 +537,7 @@ def calculate_user_based(user_items, items):
     recs = loaded_model.recommend(
         userid=0, user_items=user_items, recalculate_user=True, N=10
     )
-    return [str(items[r]) for r, s in recs]
+    return [str(items[r]) for r in recs[0]]
 
 
 def build_matrix_input(input_rating_dict, items):
