@@ -1,5 +1,6 @@
 from typing import List, Optional
 from fastapi import FastAPI, Query
+from recommender import item_based_recommendation
 from resolver import random_items, random_genres_items
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,4 +31,5 @@ async def user_based(params: Optional[List[str]] = Query(None)):
 
 @app.get("/item-based/{item_id}")
 async def item_based(item_id: str):
-    return {"message": f"item ased: {item_id}"}
+    result = item_based_recommendation(item_id)
+    return {"result": result}
