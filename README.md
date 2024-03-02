@@ -444,3 +444,90 @@ Collaborative Filtering 기반의 추천 시스템이므로 변수에 여러 값
 ```
 recommender.py를 실행하면 model 폴더 밑에 finalized_model.sav라는 모델 파일이 생긴 것을 확인할 수 있다.
 ```
+## /item-based 엔드포인트
+```
+implicit 패키지의 similar_items 함수는 Collaborative Filtering 기반, 즉 유저-아이템 간의 상호작용을 가지고
+비슷한 아이템을 추천해주는 함수다. 
+```
+#### recommender.py 수정(calculate_item_based, item_based_recommendation)
+```python
+def model_train():
+    ratings_df = pd.read_csv(data_fname)
+    ratings_df["userId"] = ratings_df["userId"].astype("category")
+    ratings_df["movieId"] = ratings_df["movieId"].astype("category")
+
+    # create a sparse matrix of all the users/repos
+    rating_matrix = coo_matrix(
+        (
+            ratings_df["rating"].astype(np.float32),
+            (
+                ratings_df["movieId"].cat.codes.copy(),
+                ratings_df["userId"].cat.codes.copy(),
+            ),
+        )
+    )
+
+    als_model = AlternatingLeastSquares(
+        factors=50, regularization=0.01, dtype=np.float64, iterations=50
+    )
+
+    als_model.fit(weight * rating_matrix)
+
+    pickle.dump(als_model, open(saved_model_fname, "wb"))
+    return als_model
+
+
+def calculate_item_based(item_id, items):
+    loaded_model = pickle.load(open(saved_model_fname, "rb"))
+    recs = loaded_model.similar_items(itemid=int(item_id), N=11)
+    return [str(items[r]) for r, s in recs]
+
+
+def item_based_recommendation(item_id):
+    ratings_df = pd.read_csv(data_fname)
+    ratings_df["userId"] = ratings_df["userId"].astype("category")
+    ratings_df["movieId"] = ratings_df["movieId"].astype("category")
+    movies_df = pd.read_csv(item_fname)
+
+    items = dict(enumerate(ratings_df["movieId"].cat.categories))
+    try:
+        parsed_id = ratings_df["movieId"].cat.categories.get_loc(int(item_id))
+        result = calculate_item_based(parsed_id, items)
+    except KeyError as e:
+        result = []
+    result = [int(x) for x in result if x != item_id]
+    result_items = movies_df[movies_df["movieId"].isin(result)].to_dict("records")
+    return result_items
+```
+```
+calculate_item_based 함수는 모델에 itemId를 입력하고, 가장 비슷한 11개의 영화를 결과로 반환하는 함수다.
+11개로 한 이유는 자기 자신이 제일 높은 유사도로 나오기 때문에 첫 번째 결과를 제외한 10개의 결과를 얻기 위함이다.
+
+item_based_recommendation은 원하는 데이터 형태를 모두 받을 수 있돌고 변환해주는 함수다.
+calculate_item_based 함수에서는 가장 비슷한 영화의 movieId만을 출력하기에 원하는 결과를 모두 표시하려면
+movieId, title, genres 등 movies_final.csv 파일에 있는 정보를 함께 반환해준다.
+```
+#### main.py 수정 (/item-based)
+```python
+@app.get("/item-based/{item_id}")
+async def item_based(item_id: str):
+    result = item_based_recommendation(item_id)
+    return {"result": result}
+```
+```
+/item-based 엔드포인트를 다음과 같이 item_based_recommendation 함수의 결과를 출력하도록 수정한다.
+```
+#### /item-based/2 CF기반 영화 추천 테스팅
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/a3c71da3-b869-472d-8f92-bdae43f940c2)
+```
+2번 영화인 Jumanji와 비슷한 영화를 추천받기 위해 localhost:8000/item-based/2로 접속하면 Jumanji와 비슷한
+영화 10개가 출력된다.
+```
+![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/03613b2f-d4c5-4ecb-9fa2-e5ace2ff8707)
+```
+72번 영화인 Kicking and Screaming와 비슷한 영화로 Jumanji가 있다. 
+```
+
+
+
+
