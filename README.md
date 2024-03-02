@@ -527,7 +527,74 @@ async def item_based(item_id: str):
 ```
 72번 영화인 Kicking and Screaming와 비슷한 영화로 Jumanji가 있다. 
 ```
+## /user-based 엔드포인트
+```
+/user-based 엔드포인트에서는 유저의 평점을 기반으로 한 추천 결과를 보여준다.
+```
+#### recommender.py 수정 (calculate_user_based, build_matrix_input, user_based_recommendation)
+```python
+def calculate_user_based(user_items, items):
+    loaded_model = pickle.load(open(saved_model_fname, "rb"))
+    recs = loaded_model.recommend(
+        userid=0, user_items=user_items, recalculate_user=True, N=10
+    )
+    return [str(items[r]) for r, s in recs]
 
 
+def build_matrix_input(input_rating_dict, items):
+    model = pickle.load(open(saved_model_fname, "rb"))
+    # input rating list : {1: 4.0, 2: 3.5, 3: 5.0}
 
+    item_ids = {r: i for i, r in items.items()}
+    mapped_idx = [item_ids[s]
+                  for s in input_rating_dict.keys() if s in item_ids]
+    data = [weight * float(x) for x in input_rating_dict.values()]
+    # print('mapped index', mapped_idx)
+    # print('weight data', data)
+    rows = [0 for _ in mapped_idx]
+    shape = (1, model.item_factors.shape[0])
+    return coo_matrix((data, (rows, mapped_idx)), shape=shape).tocsr()
+
+
+def user_based_recommendation(input_ratings):
+    ratings_df = pd.read_csv(data_fname)
+    ratings_df["userId"] = ratings_df["userId"].astype("category")
+    ratings_df["movieId"] = ratings_df["movieId"].astype("category")
+    movies_df = pd.read_csv(item_fname)
+
+    items = dict(enumerate(ratings_df["movieId"].cat.categories))
+    input_matrix = build_matrix_input(input_ratings, items)
+    result = calculate_user_based(input_matrix, items)
+    result = [int(x) for x in result]
+    result_items = movies_df[movies_df["movieId"].isin(
+        result)].to_dict("records")
+    return result_items
+```
+```
+calculate_user_based에서는 recommend 함수를 사용하여 유저 기반의 추천을 한다.
+build_matrix_input 함수를 이용해서 user input을 정의해주어야 한다.
+input으로 받는 형태는 {1: 4.5, 2: 4.0}과 같이 python dictionary 형태로 받게 되는데
+recommend 함수에서 필요한 데이터 형태가 user-item 간의 coo_matrix이기 때문이다.
+```
+#### main.py 수정 (/user-based 엔드포인트)
+```python
+@app.get("/user-based/")
+async def user_based(params: Optional[List[str]] = Query(None)):
+    input_ratings_dict = dict(
+        (int(x.split(":")[0]), float(x.split(":")[1])) for x in params
+    )
+    result = user_based_recommendation(input_ratings_dict)
+    return {"result": result}
+```
+```
+FastAPI에서 url parmeter를 사용하기 위한 기본적인 형태로 input의 형태가 Optional[List[str]] 형태다.
+input_rating_dict 변수는 localhost:8000/user-based/?params=1:4.5&params=2:5 url로 접근했을 때
+FastAPI에서 params를 ["1:4.5", "2:5"]라는 리스트의 형태를 user_based_recommendation 함수에서 다루기
+쉽도록 변환한 것이다.
+```
+#### /user-based 추천 테스팅
+
+```
+
+```
 
