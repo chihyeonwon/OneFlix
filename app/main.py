@@ -1,6 +1,6 @@
 from typing import List, Optional
 from fastapi import FastAPI, Query
-from recommender import item_based_recommendation
+from recommender import item_based_recommendation, user_based_recommendation
 from resolver import random_items, random_genres_items
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,7 +26,11 @@ async def genre_movies(genre: str):
 
 @app.get("/user-based/")
 async def user_based(params: Optional[List[str]] = Query(None)):
-    return {"message": "user based"}
+    input_ratings_dict = dict(
+        (int(x.split(":")[0]), float(x.split(":")[1])) for x in params
+    )
+    result = user_based_recommendation(input_ratings_dict)
+    return {"result": result}
 
 
 @app.get("/item-based/{item_id}")
