@@ -1,10 +1,33 @@
+from distutils.command import config
 from typing import List, Optional
-from fastapi import FastAPI, Query
-from recommender import item_based_recommendation, user_based_recommendation
-from resolver import random_items, random_genres_items
-from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
+
+from recommender import item_based_recommendation, user_based_recommendation
+from resolver import random_genres_items, random_items
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "https://chihyeonwon.github.io/oneflix",
+    "https://chihyeonwon.github.io",
+    "http://oneflix.link:8080",
+    "http://oneflix.link",
+]
+
+middleware = [
+    Middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+]
+
+app = FastAPI(middleware=middleware)
 
 
 @app.get("/")
