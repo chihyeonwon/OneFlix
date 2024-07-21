@@ -6,6 +6,8 @@
 - Visual Studio Code
 - Python 3.11.8
 
+[무중단 배포](https://youtu.be/8FN3aHDimTE?si=hFc-pKTmY7ItkSKD)
+
 ## 파이썬 가상 환경 생성하기
 ![image](https://github.com/chihyeonwon/OneFlix/assets/58906858/c5fafd5a-db32-4144-bbba-0c88a41e080f)
 ```
