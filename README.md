@@ -1,3 +1,7 @@
+25.03.05
+![image](https://github.com/user-attachments/assets/98e2dd74-3841-46fd-a46d-3a5bf315dbf3)
+AWS Routing 계약 기간 종료로 서비스 종료 되었습니다~
+
 ## 기술 스택
 - FastAPI, Implicit 라이브러리 (데이터 전처리)
 - AWS EC2, Route53
